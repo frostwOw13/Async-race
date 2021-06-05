@@ -1,16 +1,5 @@
-import { PageIds } from '../../app';
+import { buttons } from '../../shared/constants';
 import { Component } from '../../components/component';
-
-const buttons = [
-  {
-    id: PageIds.GaragePage,
-    text: 'to garage'
-  },
-  {
-    id: PageIds.WinnersPage,
-    text: 'to winners'
-  }
-]
 
 export class Header extends Component {
   constructor(tagName: string, className: string) {
@@ -18,6 +7,7 @@ export class Header extends Component {
   }
 
   private renderPageButtons(): void {
+    this.container.innerHTML = '';
     const pageButtons = document.createElement('div');
     buttons.forEach((button) => {
       const buttonHTML = document.createElement('a');

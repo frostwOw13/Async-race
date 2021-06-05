@@ -12,12 +12,12 @@ export const getCars = async (page: number, limit: number = 7) => {
   }
 }
 
-export const getCar = async (id: number) => {
-  await (await fetch(`${garage}/${id}`)).json();
+export const getCar = async (id: string) => {
+  return await (await fetch(`${garage}/${id}`)).json();
 }
 
 export const createCar = async (body: object) => {
-  (await fetch(garage, {
+  return (await fetch(garage, {
     method: 'POST',
     body: JSON.stringify(body),
     headers: {
@@ -41,7 +41,7 @@ export const updateCar = async (id: number, body: object) => {
 }
 
 export const startEngine = async (id: number) => {
-  (await fetch (`${engine}?id=${id}&status=started`)).json();
+  return (await fetch (`${engine}?id=${id}&status=started`)).json();
 }
 
 export const stopEngine = async (id: number) => {

@@ -1,26 +1,22 @@
-import { Page } from '../page';
+import { RenderCar } from '../../../shared/constants';
 import './garage.scss';
 
-interface RenderCar {
-  id: number,
-  name: string,
-  color: string,
-  isEngineStarted: boolean
-}
+export class Garage {
+  private container: HTMLElement;
 
-export class Garage extends Page {
   constructor(className: string) {
-    super(className);
+    this.container = document.createElement('div');
+    this.container.className = className;
   }
 
-  private renderGarage(cars: RenderCar[]): string {
+  private renderGarage(cars: RenderCar[], count: string): string {
     const garageHTML = `
-      <h1>Garage (number all cars)</h1>
+      <h1>Garage (${count})</h1>
       <h2>Page (page cars)</h2>
       <ul class='garage'>
-        ${cars.map((car) => {`
-          <li>${this.renderCar(car)}</li>
-        `}).join('')}
+        ${cars.map((car) => `
+          <li class="garage__item">${this.renderCar(car)}</li>
+        `).join('')}
       </ul>
     `;
     return garageHTML;
@@ -28,7 +24,7 @@ export class Garage extends Page {
 
   private renderCarImage(color: string): string {
     const carImageHTML = `
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="256" height="256">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="64" height="64">
         <g id="_13-car" data-name="13-car" style="fill:${color}">
           <g id="glyph">
             <path d="M120,236a52,52,0,1,0,52,52A52.059,52.059,0,0,0,120,236Zm0,76a24,24,0,1,1,24-24A24,24,0,0,1,120,312Z"/>
@@ -43,7 +39,7 @@ export class Garage extends Page {
 
   private renderCar({ id, name, color, isEngineStarted }: RenderCar): string {
     const carHTML = `
-      <div class='general-buttons>
+      <div class='general-buttons'>
         <button class='btn select-btn' id='select-car-${id}'>Select</button>
         <button class='btn remove-btn' id='remove-car-${id}'>Remove</button>
         <span class='car-name'>${name}</span>
@@ -61,23 +57,22 @@ export class Garage extends Page {
         <div class='finish' id='finish-${id}'>🏁</div>
       </div>
     `;
-
     return carHTML;
   }
 
-  public renderPage(cars: RenderCar[]): HTMLElement {
+  public render(cars: RenderCar[], count: string): HTMLElement {
     const html = `
       <div class='garage-view'>
         <div>
           <form class='form' id='create'>
             <input class='input' id='create-name' name='name' type='text'>
             <input class='color' id='create-color' name='color' type='color' value='#FFFFFF'>
-            <button class='btn' type=''submit'>Create</button>
+            <button class='btn' type='submit' id='create-submit'>Create</button>
           </form>
           <form class='form' id='update'>
             <input class='input' id='update-name' name='name' type='text'>
             <input class='color' id='update-color' name='color' type='color' value='#FFFFFF'>
-            <button class='btn' type=''submit'>Update</button>
+            <button class='btn' type='submit' id='update-submit'>Update</button>
           </form>
         </div>
         <div class='race-control'>
@@ -86,7 +81,7 @@ export class Garage extends Page {
           <button class='button generator-button' id='generator'>Generate cars</button>
         </div>
         <div id='garage'>
-          ${this.renderGarage(cars)}
+          ${this.renderGarage(cars, count)}
         </div>
       </div>
     `;
