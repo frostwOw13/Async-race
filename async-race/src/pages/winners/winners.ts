@@ -6,16 +6,23 @@ export class Winners extends Page {
     super(className);
   }
 
-  private createHeaderTitle(title: string) {
-    const headerTitle = document.createElement('h2');
-    headerTitle.className = 'winners-title';
-    headerTitle.innerText = title;
-    return headerTitle;
+  private renderWinners(): string {
+    const winnersHTML = `
+      <h1>Winners (winners number)</h1>
+      <h2>Page (page winners)</h2>
+      <table class='table' cellspacing='0' border='0' cellpadding='0'>
+        <thead>
+        <th>Number</th>
+        <th>Car</th>
+        <th>Name</th>
+        <th class='table-button table-wins'></th>
+        </thead>
+      </table>
+    `;
+    return winnersHTML;
   }
 
   public render(): HTMLElement {
-    const headerTitle = this.createHeaderTitle('Winners')
-    this.container.append(headerTitle);
     return this.container;
   }
 }
