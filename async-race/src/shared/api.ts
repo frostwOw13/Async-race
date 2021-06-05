@@ -26,11 +26,11 @@ export const createCar = async (body: object) => {
   })).json();
 }
 
-export const deleteCar = async (id: number) => {
+export const deleteCar = async (id: string) => {
   (await fetch(`${garage}/${id}`, { method: 'DELETE' })).json();
 }
 
-export const updateCar = async (id: number, body: object) => {
+export const updateCar = async (id: string, body: object) => {
   (await fetch(`${garage}/${id}`, {
     method: 'PUT',
     body: JSON.stringify(body),
@@ -40,15 +40,15 @@ export const updateCar = async (id: number, body: object) => {
     })).json();
 }
 
-export const startEngine = async (id: number) => {
+export const startEngine = async (id: string) => {
   return (await fetch (`${engine}?id=${id}&status=started`)).json();
 }
 
-export const stopEngine = async (id: number) => {
+export const stopEngine = async (id: string) => {
   (await fetch (`${engine}?id=${id}&status=stopped`)).json();
 }
 
-export const drive = async (id: number) => {
+export const drive = async (id: string) => {
   const res = await fetch (`${engine}?id=${id}&status=drive`).catch();
   return res.status !== 200 ? { succes: false } : { ...(await res.json()) };
 }

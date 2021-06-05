@@ -9,7 +9,7 @@ export class Garage {
     this.container.className = className;
   }
 
-  private renderGarage(cars: RenderCar[], count: string): string {
+  public renderGarage(cars: RenderCar[], count: string): string {
     const garageHTML = `
       <h1>Garage (${count})</h1>
       <h2>Page (page cars)</h2>
@@ -47,8 +47,8 @@ export class Garage {
       <div class='road'>
         <div class='launch-pad'>
           <div class='control-panel'>
-            <button class='icon start-engine-btn' id='start-engine-car-${id} ${isEngineStarted ? 'disabled' : ''}'>start</button>
-            <button class='icon stop-engine-btn' id='stop-engine-car-${id} ${isEngineStarted ? 'disabled' : ''}'>stop</button>
+            <button class='start-engine-btn' id='start-engine-car-${id}${isEngineStarted ? 'disabled' : ''}'>start</button>
+            <button class='stop-engine-btn' id='stop-engine-car-${id}${isEngineStarted ? 'disabled' : ''}'>stop</button>
           </div>
           <div class='car' id='car-${id}'>
             ${this.renderCarImage(color)}
@@ -67,12 +67,12 @@ export class Garage {
           <form class='form' id='create'>
             <input class='input' id='create-name' name='name' type='text'>
             <input class='color' id='create-color' name='color' type='color' value='#FFFFFF'>
-            <button class='btn' type='submit' id='create-submit'>Create</button>
+            <button class='btn' id='create-submit'>Create</button>
           </form>
           <form class='form' id='update'>
-            <input class='input' id='update-name' name='name' type='text'>
-            <input class='color' id='update-color' name='color' type='color' value='#FFFFFF'>
-            <button class='btn' type='submit' id='update-submit'>Update</button>
+            <input disabled class='input' id='update-name' name='name' type='text'>
+            <input disabled class='color' id='update-color' name='color' type='color' value='#FFFFFF'>
+            <button disabled class='btn' id='update-submit' href='#'>Update</button>
           </form>
         </div>
         <div class='race-control'>
