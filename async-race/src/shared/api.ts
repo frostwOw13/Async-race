@@ -50,7 +50,7 @@ export const stopEngine = async (id: string) => {
 
 export const drive = async (id: string) => {
   const res = await fetch (`${engine}?id=${id}&status=drive`).catch();
-  return res.status !== 200 ? { succes: false } : { ...(await res.json()) };
+  return res.status !== 200 ? { success: false } : { ...(await res.json()) };
 }
 
 const getSortOrder = async (sort: any, order: any) => {

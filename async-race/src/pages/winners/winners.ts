@@ -1,9 +1,11 @@
-import { Page } from '../page';
 import './winners.scss';
 
-export class Winners extends Page {
+export class Winners {
+  private container: HTMLElement;
+
   constructor(className: string) {
-    super(className);
+    this.container = document.createElement('div');
+    this.container.className = className;
   }
 
   private renderWinners(): string {

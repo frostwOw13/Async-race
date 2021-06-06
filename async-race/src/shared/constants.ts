@@ -25,5 +25,3 @@ export interface BodyCar {
   name: string,
   color: string
 }
-
-export const KILOMETER = 1000;

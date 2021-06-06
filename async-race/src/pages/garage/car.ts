@@ -1,5 +1,5 @@
 import { createCar, deleteCar, startEngine, stopEngine, updateCar } from '../../shared/api';
-import { BodyCar, KILOMETER } from '../../shared/constants';
+import { BodyCar } from '../../shared/constants';
 import './car.scss'
 
 export class Car {
@@ -24,7 +24,7 @@ export class Car {
 
   public async start(id: string) {
     const params = await startEngine(id);
-    const time = Math.round(params.distance / KILOMETER / params.velocity);
+    const time = Math.round(params.distance / params.velocity);
     return time;
   }
 

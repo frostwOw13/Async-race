@@ -2,8 +2,8 @@ import { Car } from './pages/garage/car';
 import { Garage } from "./pages/garage/page/garage";
 import { Header } from './pages/header/header';
 import { Winners } from './pages/winners/winners';
-import { BodyCar, PageIds } from './shared/constants';
-import { createCar, deleteCar, deleteWinner, getCar, getCars } from './shared/api';
+import { PageIds } from './shared/constants';
+import { drive, getCar, getCars } from './shared/api';
 
 export class App {
   private container: HTMLElement = document.body;
@@ -74,11 +74,11 @@ export class App {
         const id = eventTarget.id.split('-')[3];
         const time = await this.car.start(id);
         const car = document.getElementById(`car-${id}`);
-        const width = document.querySelector('.road')?.clientWidth;
+        const flag = document.getElementById(`finish-${id}`);
+        const distance = Math.floor(this.getDistance(car!, flag!) + 100);
 
-        if (car && width) {
-          car.style.transition = `linear ${time}s`
-          car.style.transform = `translateX(${width - 60}px)`;
+        if (car && distance) {
+          this.animation(car, distance, time, id);
         }
       }
 
@@ -92,6 +92,39 @@ export class App {
         }
       }
     });
+  }
+
+  private async animation(car: HTMLElement, distance: number, animationTime: number, id: string) {
+    let start: number = 0;
+    let requestId: number = 0;
+
+    const step = function (timestamp: number) {
+      if (!start) start = timestamp;
+      const time = timestamp - start;
+      const passed = Math.round(time * (distance / animationTime));
+      car.style.transform = `translateX(${Math.min(passed, distance)}px)`;
+
+      if (passed < distance) requestId = window.requestAnimationFrame(step);
+    }
+    requestId = window.requestAnimationFrame(step);
+
+    const { success } = await drive(id);
+    if (!success) cancelAnimationFrame(requestId);
+  }
+
+  private getElementPosition(element: HTMLElement) {
+    const { top, left, width, height } = element.getBoundingClientRect();
+    return {
+      x: left + width / 2,
+      y: top + height / 2
+    };
+  }
+
+  private getDistance(a: HTMLElement, b: HTMLElement) {
+    const aPosition = this.getElementPosition(a);
+    const bPosition = this.getElementPosition(b);
+
+    return Math.hypot(aPosition.x - bPosition.x + 40, aPosition.y - bPosition.y);
   }
 
   private updateCarListener(id: string) {
