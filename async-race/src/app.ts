@@ -2,7 +2,7 @@ import { Car } from './pages/garage/car';
 import { Garage } from './pages/garage/page/garage';
 import { Header } from './pages/header/header';
 import { Winners } from './pages/winners/winners';
-import { PageIds } from './shared/constants';
+import { MAX_CARS_ON_PAGE, PageIds } from './shared/constants';
 import { getCar, getCars } from './shared/api';
 import { Animation } from './components/animation';
 import { RenderCar } from './shared/constants';
@@ -15,6 +15,7 @@ export class App {
   private garagePage: Garage;
   private winnersPage: Winners;
   private animation: Animation;
+  private currentPage: number;
 
   constructor() {
     this.header = new Header('header', 'header');
@@ -22,6 +23,7 @@ export class App {
     this.winnersPage = new Winners('winners');
     this.car = new Car();
     this.animation = new Animation();
+    this.currentPage = 1;
   }
 
   public async renderNewPage(idPage: string): Promise<void> {
@@ -29,8 +31,8 @@ export class App {
     this.container.append(this.header.render());
 
     if (idPage === PageIds.GaragePage) {
-      const { items, count } = await getCars(1, 7);
-      this.container.append(this.garagePage.render(items, count ? count : ''));
+      const { items, count } = await getCars(this.currentPage, MAX_CARS_ON_PAGE);
+      this.container.append(this.garagePage.render(items, count ? count : '', this.currentPage));
     } else if (idPage === PageIds.WinnersPage) {
       this.container.append(this.winnersPage.render());
     }
@@ -58,8 +60,8 @@ export class App {
       if (eventTarget.className === 'btn remove-btn') {
         const id = eventTarget.id.split('-')[2];
         this.car.deleteCar(id);
-        const { items, count } = await getCars(1, 7);
-        this.garagePage.renderGarage(items, count ? count : '');
+        const { items, count } = await getCars(this.currentPage, MAX_CARS_ON_PAGE);
+        this.garagePage.renderGarage(items, count ? count : '', this.currentPage);
         this.renderNewPage('garage');
       }
 
@@ -106,7 +108,7 @@ export class App {
         eventTarget.disabled = true;
         const resetButton = <HTMLButtonElement>document.getElementById('reset');
         resetButton.disabled = false;
-        const { items } = await getCars(1, 7);
+        const { items } = await getCars(this.currentPage, MAX_CARS_ON_PAGE);
         items.forEach(async (car: RenderCar) => {
           const carHTML = document.getElementById(`car-${car.id}`);
           const flagHTML = document.getElementById(`finish-${car.id}`);
@@ -128,7 +130,7 @@ export class App {
         const raceButton = <HTMLButtonElement>document.getElementById('race');
         raceButton.disabled = false;
 
-        const { items } = await getCars(1, 7);
+        const { items } = await getCars(this.currentPage, MAX_CARS_ON_PAGE);
         items.forEach((car: RenderCar) => {
           this.car.stop(car.id.toString());
           const carHTML = document.getElementById(`car-${car.id}`);
@@ -206,9 +208,29 @@ export class App {
 
           if (name && color) this.car.addCar(name, color);
         }
-        const { items, count } = await getCars(1, 7);
-        this.garagePage.renderGarage(items, count ? count : '');
+        const { items, count } = await getCars(this.currentPage, MAX_CARS_ON_PAGE);
+        this.garagePage.renderGarage(items, count ? count : '', this.currentPage);
         this.renderNewPage('garage');
+      }
+
+      if (eventTarget.id === 'prev') {
+        if (this.currentPage > 1) {
+          this.currentPage -= 1;
+          const { items, count } = await getCars(this.currentPage, MAX_CARS_ON_PAGE);
+          this.garagePage.renderGarage(items, count ? count : '', this.currentPage);
+          this.renderNewPage('garage');
+        }
+      }
+
+      if (eventTarget.id === 'next') {
+        const { items, count } = await getCars(this.currentPage, MAX_CARS_ON_PAGE);
+        if (count && Number(count) / (MAX_CARS_ON_PAGE * this.currentPage) > 1) {
+          this.currentPage += 1;
+          if (items) {
+            this.garagePage.renderGarage(items, count ? count : '', this.currentPage);
+            this.renderNewPage('garage');
+          }
+        }
       }
     });
   }
@@ -231,8 +253,8 @@ export class App {
       };
       this.car.updateCar(id, car);
 
-      const { items, count } = await getCars(1, 7);
-      this.garagePage.renderGarage(items, count ? count : '');
+      const { items, count } = await getCars(this.currentPage, MAX_CARS_ON_PAGE);
+      this.garagePage.renderGarage(items, count ? count : '', this.currentPage);
       this.renderNewPage('garage');
     });
   }

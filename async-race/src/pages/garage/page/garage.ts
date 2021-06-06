@@ -9,15 +9,19 @@ export class Garage {
     this.container.className = className;
   }
 
-  public renderGarage(cars: RenderCar[], count: string): string {
+  public renderGarage(cars: RenderCar[], count: string, page: number): string {
     const garageHTML = `
       <h1>Garage (${count})</h1>
-      <h2>Page (page cars)</h2>
+      <h2>Page #${page}</h2>
       <ul class='garage'>
         ${cars.map((car) => `
           <li class="garage__item">${this.renderCar(car)}</li>
         `).join('')}
       </ul>
+      <div class='pagination'>
+        <button class='page-btn' id='prev'>Previous</button>
+        <button class='page-btn' id='next'>Next</button>
+      </div>
     `;
     return garageHTML;
   }
@@ -60,7 +64,7 @@ export class Garage {
     return carHTML;
   }
 
-  public render(cars: RenderCar[], count: string): HTMLElement {
+  public render(cars: RenderCar[], count: string, page: number): HTMLElement {
     const html = `
       <div class='garage-view'>
         <div>
@@ -81,7 +85,7 @@ export class Garage {
           <button class='button generator-button' id='generator'>Generate cars</button>
         </div>
         <div id='garage'>
-          ${this.renderGarage(cars, count)}
+          ${this.renderGarage(cars, count, page)}
         </div>
       </div>
     `;

@@ -1,3 +1,5 @@
+export const MAX_CARS_ON_PAGE = 7;
+
 export interface RenderCar {
   id: number,
   name: string,
