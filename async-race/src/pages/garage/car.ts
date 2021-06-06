@@ -9,7 +9,6 @@ export class Car {
 
   public async addCar(name: string, color: string) {
     const newCar = await createCar({ name, color });
-    console.log(newCar);
   }
 
   public async updateCar(id: string, body: BodyCar) {

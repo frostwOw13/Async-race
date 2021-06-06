@@ -1,5 +1,5 @@
 import { Car } from './pages/garage/car';
-import { Garage } from "./pages/garage/page/garage";
+import { Garage } from './pages/garage/page/garage';
 import { Header } from './pages/header/header';
 import { Winners } from './pages/winners/winners';
 import { PageIds } from './shared/constants';
@@ -40,16 +40,16 @@ export class App {
     window.addEventListener('hashchange', () => {
       const hash = window.location.hash.slice(1);
       this.renderNewPage(hash);
-    })
+    });
   }
 
   private listener() {
     window.addEventListener('click', async (event) => {
-      const eventTarget = (<HTMLButtonElement>event.target);
+      const eventTarget = <HTMLButtonElement>event.target;
 
       if (eventTarget.id === 'create-submit') {
-        const createName = <HTMLInputElement>document.getElementById('create-name');
-        const createColor = <HTMLInputElement>document.getElementById('create-color');
+        const createName = <HTMLInputElement>(document.getElementById('create-name'));
+        const createColor = <HTMLInputElement>(document.getElementById('create-color'));
         const name = createName.value;
         const color = createColor.value;
         if (name && color) this.car.addCar(name, color);
@@ -64,9 +64,9 @@ export class App {
       }
 
       if (eventTarget.className === 'btn select-btn') {
-        const updateName = <HTMLInputElement>document.getElementById('update-name');
-        const updateColor = <HTMLInputElement>document.getElementById('update-color');
-        const updateSubmit = <HTMLButtonElement>document.getElementById('update-submit');
+        const updateName = <HTMLInputElement>(document.getElementById('update-name'));
+        const updateColor = <HTMLInputElement>(document.getElementById('update-color'));
+        const updateSubmit = <HTMLButtonElement>(document.getElementById('update-submit'));
         updateName.disabled = false;
         updateColor.disabled = false;
         updateSubmit.disabled = false;
@@ -76,7 +76,7 @@ export class App {
 
       if (eventTarget.className === 'start-engine-btn') {
         eventTarget.disabled = true;
-        const stopButton = <HTMLInputElement>document.querySelector('.stop-engine-btn')
+        const stopButton = <HTMLInputElement>(document.querySelector('.stop-engine-btn'));
         stopButton.disabled = false;
         const id = eventTarget.id.split('-')[3];
         const time = await this.car.start(id);
@@ -90,7 +90,7 @@ export class App {
 
       if (eventTarget.className === 'stop-engine-btn') {
         eventTarget.disabled = true;
-        const startButton = <HTMLInputElement>document.querySelector('.start-engine-btn')
+        const startButton = <HTMLInputElement>(document.querySelector('.start-engine-btn'));
         startButton.disabled = false;
         const id = eventTarget.id.split('-')[3];
         this.car.stop(id);
@@ -98,7 +98,8 @@ export class App {
         if (car) {
           car.style.transform = `translateX(0)`;
         }
-        if (this.animation.animation) window.cancelAnimationFrame(this.animation.animation);
+        if (this.animation.animation)
+          window.cancelAnimationFrame(this.animation.animation);
       }
 
       if (eventTarget.id === 'race') {
@@ -112,7 +113,12 @@ export class App {
           const time = await this.car.start(car.id.toString());
 
           if (carHTML && flagHTML) {
-            this.animation.startAnimation(carHTML, time, car.id.toString(), flagHTML);
+            this.animation.startAnimation(
+              carHTML,
+              time,
+              car.id.toString(),
+              flagHTML
+            );
           }
         });
       }
@@ -125,10 +131,84 @@ export class App {
         const { items } = await getCars(1, 7);
         items.forEach((car: RenderCar) => {
           this.car.stop(car.id.toString());
-          const carHTML = document.getElementById(`car-${car.id}`)
+          const carHTML = document.getElementById(`car-${car.id}`);
           if (carHTML) carHTML.style.transform = `translateX(0)`;
-          if (this.animation.animation) window.cancelAnimationFrame(this.animation.animation)
+          if (this.animation.animation)
+            window.cancelAnimationFrame(this.animation.animation);
         });
+      }
+
+      if (eventTarget.id === 'generator') {
+        const carBrands = [
+          'Lada',
+          'Kia',
+          'Hyundai',
+          'Renault',
+          'Toyota',
+          'VW',
+          'Skoda',
+          'Nissan',
+          'BMW',
+          'Mercedes',
+          'Mazda',
+          'Mitsubishi',
+          'Lexus',
+          'Datsun',
+          'Haval',
+          'Audi',
+          'Geely',
+          'Suzuki',
+          'Chery',
+          'Volvo',
+          'Porsche',
+          'Subaru',
+          'Peugeot',
+          'Citroёn',
+          'MINI',
+          'Honda',
+          'FAW',
+        ];
+
+        const carModels = [
+          'Rio',
+          'Granta',
+          'Vesta',
+          'Solaris',
+          'Creta',
+          'Polo',
+          'Daster',
+          'Largus',
+          'Xray',
+          'Rav 4',
+          'Niva',
+          'Captur',
+          'Logan',
+          'Sandero',
+          'Rapid',
+          'Camry',
+          'Tiguan',
+          'Sportage',
+          'Octavia'
+        ];
+
+        const randomColor = '0123456789abcdef';
+
+        let countCars = 0;
+        while (countCars < 100) {
+          countCars++;
+          const carBrand = carBrands[Math.round(Math.random() * carBrands.length)];
+          const carModel = carModels[Math.round(Math.random() * carModels.length)];
+          const name = `${carBrand} ${carModel}`;
+          let color = '#';
+          for (let i = 0; i < 6; i++) {
+            color += randomColor.split('')[Math.round(Math.random() * 16)];
+          }
+
+          if (name && color) this.car.addCar(name, color);
+        }
+        const { items, count } = await getCars(1, 7);
+        this.garagePage.renderGarage(items, count ? count : '');
+        this.renderNewPage('garage');
       }
     });
   }
@@ -137,20 +217,24 @@ export class App {
     const form = document.getElementById('update');
     form?.addEventListener('submit', async (e) => {
       e.preventDefault();
-      const updateName = <HTMLInputElement>document.getElementById('update-name');
-      const updateColor = <HTMLInputElement>document.getElementById('update-color');
+      const updateName = <HTMLInputElement>(
+        document.getElementById('update-name')
+      );
+      const updateColor = <HTMLInputElement>(
+        document.getElementById('update-color')
+      );
       let currentCar = await getCar(id);
 
       let car = {
         name: updateName.value ? updateName.value : currentCar.name,
-        color: updateColor.value
-      }
+        color: updateColor.value,
+      };
       this.car.updateCar(id, car);
 
       const { items, count } = await getCars(1, 7);
       this.garagePage.renderGarage(items, count ? count : '');
       this.renderNewPage('garage');
-    })
+    });
   }
 
   public run() {
