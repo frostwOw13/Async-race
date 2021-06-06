@@ -110,8 +110,12 @@ export class App {
       }
 
       if (eventTarget.id === 'prev') {
-        this.listener.prevPage(this.currentPage);
-        this.renderNewGarage();
+        if (this.currentPage > 1) {
+          this.currentPage -= 1;
+          const { items, count } = await getCars(this.currentPage, MAX_CARS_ON_PAGE);
+          this.garagePage.renderGarage(items, count ? count : '', this.currentPage);
+          this.renderNewGarage();
+        }
       }
 
       if (eventTarget.id === 'next') {

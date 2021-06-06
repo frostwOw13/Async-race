@@ -143,12 +143,4 @@ export class Listener {
     const { items, count } = await getCars(currentPage, MAX_CARS_ON_PAGE);
     if (count) this.garagePage.renderGarage(items, count, currentPage);
   }
-
-  public async prevPage(currentPage: number): Promise<void> {
-    if (currentPage > 1) {
-      currentPage -= 1;
-      const { items, count } = await getCars(currentPage, MAX_CARS_ON_PAGE);
-      if (count) this.garagePage.renderGarage(items, count, currentPage);
-    }
-  }
 }
