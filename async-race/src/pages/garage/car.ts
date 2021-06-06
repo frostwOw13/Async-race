@@ -18,7 +18,6 @@ export class Car {
 
   public async deleteCar(id: string) {
     const deletedCar = await deleteCar(id);
-    console.log(deletedCar);
   }
 
   public async start(id: string) {

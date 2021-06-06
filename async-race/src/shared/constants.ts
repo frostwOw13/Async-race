@@ -27,3 +27,57 @@ export interface BodyCar {
   name: string,
   color: string
 }
+
+export const carBrands = [
+  'Lada',
+  'Kia',
+  'Hyundai',
+  'Renault',
+  'Toyota',
+  'VW',
+  'Skoda',
+  'Nissan',
+  'BMW',
+  'Mercedes',
+  'Mazda',
+  'Mitsubishi',
+  'Lexus',
+  'Datsun',
+  'Haval',
+  'Audi',
+  'Geely',
+  'Suzuki',
+  'Chery',
+  'Volvo',
+  'Porsche',
+  'Subaru',
+  'Peugeot',
+  'Citroёn',
+  'MINI',
+  'Honda',
+  'FAW',
+];
+
+export const carModels = [
+  'Rio',
+  'Granta',
+  'Vesta',
+  'Solaris',
+  'Creta',
+  'Polo',
+  'Daster',
+  'Largus',
+  'Xray',
+  'Rav 4',
+  'Niva',
+  'Captur',
+  'Logan',
+  'Sandero',
+  'Rapid',
+  'Camry',
+  'Tiguan',
+  'Sportage',
+  'Octavia'
+];
+
+export const randomColor = '0123456789abcdef';

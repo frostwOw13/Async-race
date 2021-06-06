@@ -1,5 +1,5 @@
-import { buttons } from '../../shared/constants';
-import { Component } from '../../components/component';
+import { buttons } from '../../../shared/constants';
+import { Component } from '../../../components/component';
 
 export class Header extends Component {
   constructor(tagName: string, className: string) {
