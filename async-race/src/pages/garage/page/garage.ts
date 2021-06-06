@@ -48,7 +48,7 @@ export class Garage {
         <div class='launch-pad'>
           <div class='control-panel'>
             <button class='start-engine-btn' id='start-engine-car-${id}${isEngineStarted ? 'disabled' : ''}'>start</button>
-            <button class='stop-engine-btn' id='stop-engine-car-${id}${isEngineStarted ? 'disabled' : ''}'>stop</button>
+            <button disabled class='stop-engine-btn' id='stop-engine-car-${id}${isEngineStarted ? 'disabled' : ''}'>stop</button>
           </div>
           <div class='car' id='car-${id}'>
             ${this.renderCarImage(color)}

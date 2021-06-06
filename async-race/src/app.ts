@@ -3,7 +3,9 @@ import { Garage } from "./pages/garage/page/garage";
 import { Header } from './pages/header/header';
 import { Winners } from './pages/winners/winners';
 import { PageIds } from './shared/constants';
-import { drive, getCar, getCars } from './shared/api';
+import { getCar, getCars } from './shared/api';
+import { Animation } from './components/animation';
+import { RenderCar } from './shared/constants';
 
 export class App {
   private container: HTMLElement = document.body;
@@ -12,12 +14,14 @@ export class App {
   private car: Car;
   private garagePage: Garage;
   private winnersPage: Winners;
+  private animation: Animation;
 
   constructor() {
     this.header = new Header('header', 'header');
     this.garagePage = new Garage('garage');
     this.winnersPage = new Winners('winners');
     this.car = new Car();
+    this.animation = new Animation();
   }
 
   public async renderNewPage(idPage: string): Promise<void> {
@@ -71,60 +75,62 @@ export class App {
       }
 
       if (eventTarget.className === 'start-engine-btn') {
+        eventTarget.disabled = true;
+        const stopButton = <HTMLInputElement>document.querySelector('.stop-engine-btn')
+        stopButton.disabled = false;
         const id = eventTarget.id.split('-')[3];
         const time = await this.car.start(id);
         const car = document.getElementById(`car-${id}`);
         const flag = document.getElementById(`finish-${id}`);
-        const distance = Math.floor(this.getDistance(car!, flag!) + 100);
 
-        if (car && distance) {
-          this.animation(car, distance, time, id);
+        if (car && flag) {
+          this.animation.startAnimation(car, time, id, flag);
         }
       }
 
       if (eventTarget.className === 'stop-engine-btn') {
+        eventTarget.disabled = true;
+        const startButton = <HTMLInputElement>document.querySelector('.start-engine-btn')
+        startButton.disabled = false;
         const id = eventTarget.id.split('-')[3];
         this.car.stop(id);
         const car = document.getElementById(`car-${id}`);
         if (car) {
-          car.style.transition = `0s`
           car.style.transform = `translateX(0)`;
         }
+        if (this.animation.animation) window.cancelAnimationFrame(this.animation.animation);
+      }
+
+      if (eventTarget.id === 'race') {
+        eventTarget.disabled = true;
+        const resetButton = <HTMLButtonElement>document.getElementById('reset');
+        resetButton.disabled = false;
+        const { items } = await getCars(1, 7);
+        items.forEach(async (car: RenderCar) => {
+          const carHTML = document.getElementById(`car-${car.id}`);
+          const flagHTML = document.getElementById(`finish-${car.id}`);
+          const time = await this.car.start(car.id.toString());
+
+          if (carHTML && flagHTML) {
+            this.animation.startAnimation(carHTML, time, car.id.toString(), flagHTML);
+          }
+        });
+      }
+
+      if (eventTarget.id === 'reset') {
+        eventTarget.disabled = true;
+        const raceButton = <HTMLButtonElement>document.getElementById('race');
+        raceButton.disabled = false;
+
+        const { items } = await getCars(1, 7);
+        items.forEach((car: RenderCar) => {
+          this.car.stop(car.id.toString());
+          const carHTML = document.getElementById(`car-${car.id}`)
+          if (carHTML) carHTML.style.transform = `translateX(0)`;
+          if (this.animation.animation) window.cancelAnimationFrame(this.animation.animation)
+        });
       }
     });
-  }
-
-  private async animation(car: HTMLElement, distance: number, animationTime: number, id: string) {
-    let start: number = 0;
-    let requestId: number = 0;
-
-    const step = function (timestamp: number) {
-      if (!start) start = timestamp;
-      const time = timestamp - start;
-      const passed = Math.round(time * (distance / animationTime));
-      car.style.transform = `translateX(${Math.min(passed, distance)}px)`;
-
-      if (passed < distance) requestId = window.requestAnimationFrame(step);
-    }
-    requestId = window.requestAnimationFrame(step);
-
-    const { success } = await drive(id);
-    if (!success) cancelAnimationFrame(requestId);
-  }
-
-  private getElementPosition(element: HTMLElement) {
-    const { top, left, width, height } = element.getBoundingClientRect();
-    return {
-      x: left + width / 2,
-      y: top + height / 2
-    };
-  }
-
-  private getDistance(a: HTMLElement, b: HTMLElement) {
-    const aPosition = this.getElementPosition(a);
-    const bPosition = this.getElementPosition(b);
-
-    return Math.hypot(aPosition.x - bPosition.x + 40, aPosition.y - bPosition.y);
   }
 
   private updateCarListener(id: string) {
