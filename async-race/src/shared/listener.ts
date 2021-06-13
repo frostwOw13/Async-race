@@ -1,7 +1,7 @@
 import { Animation } from '../components/animation';
 import { Car } from '../pages/garage/car';
 import { Garage } from '../pages/garage/page/garage';
-import { getCar, getCars } from './api';
+import { getCar, getCars, saveWinner } from './api';
 import { carBrands, carModels, randomColor, MAX_CARS_ON_PAGE, RenderCar } from './constants';
 
 export class Listener {
@@ -95,6 +95,8 @@ export class Listener {
 
   public async raceAllCars(raceButton: HTMLButtonElement, currentPage: number): Promise<void> {
     const resetButton = <HTMLButtonElement>document.getElementById('reset');
+    let winner: { [key: string]: unknown } | undefined;
+    let firstWinner: boolean = false;
     raceButton.disabled = true;
     resetButton.disabled = false;
 
@@ -105,13 +107,26 @@ export class Listener {
       const time = await this.car.start(car.id.toString());
 
       if (carHTML && flagHTML) {
-        this.animation.startAnimation(carHTML, time, car.id.toString(), flagHTML);
+        winner = await this.animation.startAnimation(carHTML, time, car.id.toString(), flagHTML);
+        if (winner?.success) {
+          if (!firstWinner) {
+            firstWinner = true;
+            const car = await getCar(String(winner.id));
+            this.car.messageWinner(car, Number(winner.animationTime));
+
+            const id: number = Number(winner.id);
+            const time: number = Number((Number(winner.animationTime) / 1000).toFixed(2));
+            saveWinner({ id, time });
+          }
+        }
       }
     });
   }
 
   public async stopAllCars(resetButton: HTMLButtonElement, currentPage: number): Promise<void> {
     const raceButton = <HTMLButtonElement>document.getElementById('race');
+    const winnerMessage = document.querySelector('.winner');
+    winnerMessage?.remove();
     resetButton.disabled = true;
     raceButton.disabled = false;
 
@@ -123,6 +138,7 @@ export class Listener {
       if (carHTML) carHTML.style.transform = `translateX(0)`;
       if (this.animation.animation) window.cancelAnimationFrame(this.animation.animation);
     });
+
   }
 
   public async generateCars(currentPage: number): Promise<void> {

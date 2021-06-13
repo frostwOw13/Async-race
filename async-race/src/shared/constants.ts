@@ -23,9 +23,32 @@ export const buttons = [
   }
 ]
 
+export interface RaceBodyCar {
+  success: any,
+  animationTime: number,
+  id: string
+}
+
 export interface BodyCar {
   name: string,
   color: string
+}
+
+export interface saveWinners {
+  id: number,
+  time: number
+}
+
+export interface Winner {
+  id: number,
+  wins: number,
+  time: number,
+  car: BodyCar
+}
+
+export interface ReturnValue {
+  items: Winner,
+  count: number
 }
 
 export const carBrands = [

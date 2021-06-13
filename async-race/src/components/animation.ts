@@ -1,4 +1,5 @@
-import { drive } from '../shared/api';
+import { drive, getCars } from '../shared/api';
+import { MAX_CARS_ON_PAGE, RaceBodyCar } from '../shared/constants';
 
 export class Animation {
   public animation: number;
@@ -24,6 +25,7 @@ export class Animation {
     this.animation = window.requestAnimationFrame(step);
     const { success } = await drive(id);
     if (!success) cancelAnimationFrame(this.animation);
+    if (success) return { success, id, animationTime }
   }
 
   private getElementPosition(element: HTMLElement) {

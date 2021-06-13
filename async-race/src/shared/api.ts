@@ -1,3 +1,5 @@
+import { saveWinners, Winner } from './constants';
+
 const base = 'http://127.0.0.1:3000';
 const garage = `${base}/garage`;
 const winners = `${base}/winners`;
@@ -60,17 +62,15 @@ const getSortOrder = async (sort: any, order: any) => {
 
 interface getWinners {
   page: number,
-  limit: number,
-  sort: any,
-  order: any
+  limit: number
 }
 
-export const getWinners = async ({ page, limit = 10, sort, order}: getWinners) => {
-  const response = await fetch(`${winners}?_page=${page}&_limit=${limit}${getSortOrder(sort, order)}`);
+export const getWinners = async ({ page, limit = 10}: getWinners) => {
+  const response = await fetch(`${winners}?_page=${page}&_limit=${limit}&_sort=time`);
   const items = await response.json();
 
   return {
-    items: await Promise.all(items.map(async (winner: any) => ({ ...winner, car: await getCar(winner.id) }))),
+    items: await Promise.all<Winner>(items.map(async (winner: Winner) => ({ ...winner, car: await getCar(String(winner.id)) }))),
     count: response.headers.get('X-Total-Count')
   }
 }
@@ -105,11 +105,6 @@ export const updateWinner = async (id: number, body: object) => {
       'Content-Type': 'application/json'
     }
   })).json();
-}
-
-interface saveWinners {
-  id: number,
-  time: number
 }
 
 export const saveWinner = async ({ id, time }: saveWinners) => {

@@ -97,7 +97,7 @@ export class App {
       }
 
       if (eventTarget.id === 'race') {
-        this.listener.raceAllCars(eventTarget, this.currentPage)
+        this.listener.raceAllCars(eventTarget, this.currentPage);
       }
 
       if (eventTarget.id === 'reset') {

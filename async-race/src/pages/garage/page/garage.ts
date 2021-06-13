@@ -24,7 +24,7 @@ export class Garage {
     return garageHTML;
   }
 
-  private renderCarImage(color: string): string {
+  public renderCarImage(color: string): string {
     const carImageHTML = `
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="64" height="64">
         <g id="_13-car" data-name="13-car" style="fill:${color}">
