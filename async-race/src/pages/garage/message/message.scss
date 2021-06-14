@@ -1,19 +1,25 @@
 .winner {
-  width: 500px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 450px;
   height: 150px;
   background-color: #fff;
   display: none;
   position: absolute;
-  left: 50%;
+  border-radius: 20px;
+  left: 38.5%;
   top: 50%;
-  opacity: 0.6;
+  opacity: 0.8;
 
   &.active {
     display: block;
   }
 
   .winner-title {
-    font-size: 25px;
+    padding: 0 30px;
+    font-size: 35px;
     color: black;
+    text-align: center;
   }
 }

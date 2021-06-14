@@ -83,7 +83,7 @@ export const getWinnersStatus = async (id: number) => {
   return (await fetch(`${winners}/${id}`)).status;
 }
 
-export const deleteWinner = async (id: number) => {
+export const deleteWinner = async (id: string) => {
   (await fetch(`${winners}/${id}`, { method: 'DELETE' })).json();
 }
 

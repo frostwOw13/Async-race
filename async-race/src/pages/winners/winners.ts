@@ -13,12 +13,12 @@ export class Winners {
     this.garage = new Garage('garage');
   }
 
-  private async renderWinners(page: number = 1, limit: number = 10): Promise<void> {
+  public async renderWinners(page: number = 1, limit: number = 10): Promise<void> {
     const { items, count } = await getWinners({ page, limit });
 
     const winnersHTML = `
-      <h1>Winners (${count})</h1>
-      <h2>Page #${page}</h2>
+      <h1 class='winners-title'>Winners (${count})</h1>
+      <h2 class='winners-title'>Page #${page}</h2>
       <table class='table' cellspacing='0' border='0' cellpadding='0'>
         <thead>
           <th>Number</th>
@@ -39,6 +39,10 @@ export class Winners {
             `).join('')}
         </tbody>
       </table>
+      <div class='pagination'>
+        <button class='btn winners-btn' id='prev'>Previous</button>
+        <button class='btn winners-btn' id='next'>Next</button>
+      </div>
     `;
     this.container.innerHTML = winnersHTML;
   }

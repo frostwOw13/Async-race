@@ -1,20 +1,19 @@
-import { createCar, deleteCar, startEngine, stopEngine, updateCar } from '../../shared/api';
+import { createCar, deleteCar, deleteWinner, startEngine, stopEngine, updateCar } from '../../shared/api';
 import { BodyCar } from '../../shared/constants';
-import './car.scss'
 import { Message } from './message/message';
 
 export class Car {
   public async addCar(name: string, color: string) {
-    const newCar = await createCar({ name, color });
+    await createCar({ name, color });
   }
 
   public async updateCar(id: string, body: BodyCar) {
-    const updatedCar = await updateCar(id, body);
-    console.log(updatedCar);
+    await updateCar(id, body);
   }
 
   public async deleteCar(id: string) {
-    const deletedCar = await deleteCar(id);
+    await deleteCar(id);
+    await deleteWinner(id);
   }
 
   public async start(id: string) {

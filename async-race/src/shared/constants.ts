@@ -1,5 +1,7 @@
 export const MAX_CARS_ON_PAGE = 7;
 
+export const MAX_WINNERS_ON_PAGE = 10;
+
 export interface RenderCar {
   id: number,
   name: string,

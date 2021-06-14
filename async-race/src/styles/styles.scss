@@ -1,0 +1,32 @@
+@import './fonts.scss';
+
+body {
+  background-color: #333;
+  font-family: roboto;
+  color: #ffffff;
+  background-image: url(../assets/landscape.jpg);
+}
+
+.btn {
+  outline: none;
+  width: 100px;
+  height: 30px;
+  background-color: rgb(173, 172, 172);
+  font-family: inherit;
+  border-radius: 5px;
+
+  &:hover {
+    cursor: pointer;
+    opacity: 0.95;
+  }
+}
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  .garage-btn {
+    margin-right: 10px;
+  }
+}

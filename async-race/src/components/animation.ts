@@ -1,5 +1,4 @@
-import { drive, getCars } from '../shared/api';
-import { MAX_CARS_ON_PAGE, RaceBodyCar } from '../shared/constants';
+import { drive } from '../shared/api';
 
 export class Animation {
   public animation: number;
