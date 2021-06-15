@@ -2,56 +2,31 @@ export const MAX_CARS_ON_PAGE = 7;
 
 export const MAX_WINNERS_ON_PAGE = 10;
 
-export interface RenderCar {
-  id: number,
-  name: string,
-  color: string,
-  isEngineStarted?: boolean
-}
+export const AMOUNT_OF_CARS_FROM_GENERATOR = 100;
+
+export const garage = 'http://127.0.0.1:3000/garage';
+
+export const winners = 'http://127.0.0.1:3000/winners';
+
+export const engine = 'http://127.0.0.1:3000/engine';
 
 export const enum PageIds {
-  GaragePage  ='garage',
-  WinnersPage = 'winners'
+  GaragePage = 'garage',
+  WinnersPage = 'winners',
 }
 
 export const buttons = [
   {
     id: PageIds.GaragePage,
-    text: 'to garage'
+    text: 'to garage',
   },
   {
     id: PageIds.WinnersPage,
-    text: 'to winners'
-  }
-]
+    text: 'to winners',
+  },
+];
 
-export interface RaceBodyCar {
-  success: any,
-  animationTime: number,
-  id: string
-}
-
-export interface BodyCar {
-  name: string,
-  color: string
-}
-
-export interface saveWinners {
-  id: number,
-  time: number
-}
-
-export interface Winner {
-  id: number,
-  wins: number,
-  time: number,
-  car: BodyCar
-}
-
-export interface ReturnValue {
-  items: Winner,
-  count: number
-}
+export const randomColor = '0123456789abcdef';
 
 export const carBrands = [
   'Lada',
@@ -77,7 +52,7 @@ export const carBrands = [
   'Porsche',
   'Subaru',
   'Peugeot',
-  'Citroёn',
+  'Citroen',
   'MINI',
   'Honda',
   'FAW',
@@ -102,7 +77,5 @@ export const carModels = [
   'Camry',
   'Tiguan',
   'Sportage',
-  'Octavia'
+  'Octavia',
 ];
-
-export const randomColor = '0123456789abcdef';

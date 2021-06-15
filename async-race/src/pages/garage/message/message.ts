@@ -1,4 +1,4 @@
-import './message.scss'
+import './message.scss';
 
 export class Message {
   public container: HTMLElement;
@@ -8,7 +8,7 @@ export class Message {
     this.container.className = className;
   }
 
-  public render(name: string, time: number) {
+  public render(name: string, time: number): void {
     this.container.innerHTML = `
       <p class='winner-title'>The ${name} is winner with ${(time / 1000).toFixed(2)}s</p>
     `;

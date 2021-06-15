@@ -1,21 +1,21 @@
-import { Car } from './pages/garage/car';
 import { Garage } from './pages/garage/page/garage';
 import { Header } from './pages/static/header/header';
 import { Winners } from './pages/winners/winners';
+import { Api } from './shared/api';
 import { MAX_CARS_ON_PAGE, MAX_WINNERS_ON_PAGE, PageIds } from './shared/constants';
-import { getCar, getCars, getWinners } from './shared/api';
-import { Animation } from './components/animation';
-import { RenderCar } from './shared/constants';
 import { Listener } from './shared/listener';
 
 export class App {
   private container: HTMLElement = document.body;
+
   private header: Header;
-  private car: Car;
+
   private garagePage: Garage;
+
   private winnersPage: Winners;
-  private animation: Animation;
+
   private currentPage: number;
+
   private listener: Listener;
 
   constructor() {
@@ -23,15 +23,13 @@ export class App {
     this.garagePage = new Garage('garage');
     this.winnersPage = new Winners('winners');
     this.listener = new Listener();
-    this.car = new Car();
-    this.animation = new Animation();
     this.currentPage = 1;
   }
 
-  public async init() {
+  public async init(): Promise<void> {
     this.container.append(this.header.render());
-    const { items, count } = await getCars(this.currentPage, MAX_CARS_ON_PAGE);
-    this.container.append(this.garagePage.render(items, count ? count : '', this.currentPage));
+    const { items, count } = await Api.getCars(this.currentPage, MAX_CARS_ON_PAGE);
+    if (count) this.container.append(this.garagePage.render(items, count, this.currentPage));
     this.enableRouteChange();
     this.listen();
   }
@@ -41,8 +39,8 @@ export class App {
     this.container.append(this.header.render());
 
     if (idPage === PageIds.GaragePage) {
-      const { items, count } = await getCars(this.currentPage, MAX_CARS_ON_PAGE);
-      this.container.append(this.garagePage.render(items, count ? count : '', this.currentPage));
+      const { items, count } = await Api.getCars(this.currentPage, MAX_CARS_ON_PAGE);
+      if (count) this.container.append(this.garagePage.render(items, count, this.currentPage));
     } else if (idPage === PageIds.WinnersPage) {
       this.container.append(this.winnersPage.render());
     }
@@ -53,9 +51,9 @@ export class App {
     const garageView = document.querySelector('.garage-view');
 
     garage?.remove();
-    const { items, count } = await getCars(this.currentPage, MAX_CARS_ON_PAGE);
+    const { items, count } = await Api.getCars(this.currentPage, MAX_CARS_ON_PAGE);
     if (count) {
-      garageView?.insertAdjacentHTML('beforeend', this.garagePage.renderGarage(items, count, this.currentPage));
+      garageView?.insertAdjacentHTML('beforeend', Garage.renderGarage(items, count, this.currentPage));
     }
   }
 
@@ -72,16 +70,16 @@ export class App {
       const eventTarget = <HTMLButtonElement>event.target;
 
       if (eventTarget.id === 'create-submit') {
-        this.listener.createCar();
+        Listener.createCar();
       }
 
       if (eventTarget.className === 'btn remove-btn') {
-        this.listener.removeCar(eventTarget, this.currentPage);
+        Listener.removeCar(eventTarget, this.currentPage);
         this.renderNewGarage();
       }
 
       if (eventTarget.className === 'btn select-btn') {
-        this.listener.selectCar(eventTarget).then(() => this.renderNewGarage());
+        Listener.selectCar(eventTarget).then(() => this.renderNewGarage());
       }
 
       if (eventTarget.className === 'btn-engine start-engine-btn') {
@@ -97,30 +95,30 @@ export class App {
       }
 
       if (eventTarget.id === 'reset') {
-        this.listener.stopAllCars(eventTarget, this.currentPage)
+        this.listener.stopAllCars(eventTarget, this.currentPage);
       }
 
       if (eventTarget.id === 'generator') {
-        this.listener.generateCars(this.currentPage);
+        Listener.generateCars(this.currentPage);
         this.renderNewGarage();
       }
 
       if (eventTarget.id === 'prev') {
         if (this.currentPage > 1) {
           this.currentPage -= 1;
-          const { items, count } = await getCars(this.currentPage, MAX_CARS_ON_PAGE);
-          this.garagePage.renderGarage(items, count ? count : '', this.currentPage);
+          const { items, count } = await Api.getCars(this.currentPage, MAX_CARS_ON_PAGE);
+          if (count) Garage.renderGarage(items, count, this.currentPage);
           this.winnersPage.renderWinners(this.currentPage, MAX_WINNERS_ON_PAGE);
           this.renderNewGarage();
         }
       }
 
       if (eventTarget.id === 'next') {
-        const { items, count } = await getCars(this.currentPage, MAX_CARS_ON_PAGE);
+        const { items, count } = await Api.getCars(this.currentPage, MAX_CARS_ON_PAGE);
         if (count && Number(count) / (MAX_CARS_ON_PAGE * this.currentPage) > 1) {
           this.currentPage += 1;
           if (items) {
-            this.garagePage.renderGarage(items, count ? count : '', this.currentPage);
+            if (count) Garage.renderGarage(items, count, this.currentPage);
             this.winnersPage.renderWinners(this.currentPage, MAX_WINNERS_ON_PAGE);
             this.renderNewGarage();
           }

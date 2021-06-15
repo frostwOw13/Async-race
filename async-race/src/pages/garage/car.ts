@@ -1,32 +1,38 @@
-import { createCar, deleteCar, deleteWinner, startEngine, stopEngine, updateCar } from '../../shared/api';
-import { BodyCar } from '../../shared/constants';
+import { BodyCar } from '../../shared/interfaces';
 import { Message } from './message/message';
+import { Api } from '../../shared/api';
 
 export class Car {
-  public async addCar(name: string, color: string) {
-    await createCar({ name, color });
+  private api: Api;
+
+  constructor() {
+    this.api = new Api();
   }
 
-  public async updateCar(id: string, body: BodyCar) {
-    await updateCar(id, body);
+  static async addCar(name: string, color: string): Promise<void> {
+    await Api.createCar({ name, color });
   }
 
-  public async deleteCar(id: string) {
-    await deleteCar(id);
-    await deleteWinner(id);
+  static async updateCar(id: string, body: BodyCar): Promise<void> {
+    await Api.updateCar(id, body);
   }
 
-  public async start(id: string) {
-    const params = await startEngine(id);
+  static async deleteCar(id: string): Promise<void> {
+    await Api.deleteCar(id);
+    await Api.deleteWinner(id);
+  }
+
+  static async start(id: string): Promise<number> {
+    const params = await Api.startEngine(id);
     const time = Math.round(params.distance / params.velocity);
     return time;
   }
 
-  public async stop(id: string) {
-    await stopEngine(id);
+  static async stop(id: string): Promise<void> {
+    await Api.stopEngine(id);
   }
 
-  public async messageWinner(car: BodyCar, time: number) {
+  static async messageWinner(car: BodyCar, time: number): Promise<void> {
     const message = new Message('winner');
     message.render(car.name, time);
   }

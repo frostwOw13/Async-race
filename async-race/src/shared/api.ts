@@ -1,127 +1,129 @@
-import { saveWinners, Winner } from './constants';
+import {
+  Winner,
+  GetWinnersReturn,
+  SaveWinners,
+  GetWinners,
+  GetCarsReturn,
+  BodyCar,
+  CarSpeed,
+  WinnerInfo,
+} from './interfaces';
 
-const base = 'http://127.0.0.1:3000';
-const garage = `${base}/garage`;
-const winners = `${base}/winners`;
-const engine = `${base}/engine`;
+import { garage, winners, engine } from './constants';
 
-export const getCars = async (page: number, limit: number = 7) => {
-  const response = await fetch(`${garage}?_page=${page}&_limit=${limit}`);
+export class Api {
+  static async getWinners({
+    page,
+    limit = 10,
+  }: GetWinners): Promise<GetWinnersReturn> {
+    const response = await fetch(`${winners}?_page=${page}&_limit=${limit}&_sort=time`);
+    const items = await response.json();
 
-  return {
-    items: await response.json(),
-    count: response.headers.get('X-Total-Count')
+    return {
+      items: await Promise.all<Winner>(items.map(async (winner: Winner) => ({ ...winner, car: await Api.getCar(String(winner.id)) }))),
+      count: response.headers.get('X-Total-Count'),
+    };
   }
-}
 
-export const getCar = async (id: string) => {
-  return await (await fetch(`${garage}/${id}`)).json();
-}
+  static async getCars(page: number, limit: number): Promise<GetCarsReturn> {
+    const response = await fetch(`${garage}?_page=${page}&_limit=${limit}`);
 
-export const createCar = async (body: object) => {
-  return (await fetch(garage, {
-    method: 'POST',
-    body: JSON.stringify(body),
-    headers: {
-      'Content-Type': 'application/json'
-    }
-  })).json();
-}
+    return {
+      items: await response.json(),
+      count: response.headers.get('X-Total-Count'),
+    };
+  }
 
-export const deleteCar = async (id: string) => {
-  (await fetch(`${garage}/${id}`, { method: 'DELETE' })).json();
-}
+  static async getCar(id: string): Promise<BodyCar> {
+    const car = await (await fetch(`${garage}/${id}`)).json();
+    return car;
+  }
 
-export const updateCar = async (id: string, body: object) => {
-  (await fetch(`${garage}/${id}`, {
-    method: 'PUT',
-    body: JSON.stringify(body),
-    headers: {
-      'Content-Type': 'application/json'
-    }
+  static async createCar(body: { [key: string]: unknown }): Promise<void> {
+    return (await fetch(garage, {
+      method: 'POST',
+      body: JSON.stringify(body),
+      headers: {
+        'Content-Type': 'application/json',
+      },
     })).json();
-}
-
-export const startEngine = async (id: string) => {
-  return (await fetch (`${engine}?id=${id}&status=started`)).json();
-}
-
-export const stopEngine = async (id: string) => {
-  (await fetch (`${engine}?id=${id}&status=stopped`)).json();
-}
-
-export const drive = async (id: string) => {
-  const res = await fetch (`${engine}?id=${id}&status=drive`).catch();
-  return res.status !== 200 ? { success: false } : { ...(await res.json()) };
-}
-
-const getSortOrder = async (sort: any, order: any) => {
-  if (sort & order) return `&_sort=${sort}&_order${order}`;
-  return '';
-}
-
-interface getWinners {
-  page: number,
-  limit: number
-}
-
-export const getWinners = async ({ page, limit = 10}: getWinners) => {
-  const response = await fetch(`${winners}?_page=${page}&_limit=${limit}&_sort=time`);
-  const items = await response.json();
-
-  return {
-    items: await Promise.all<Winner>(items.map(async (winner: Winner) => ({ ...winner, car: await getCar(String(winner.id)) }))),
-    count: response.headers.get('X-Total-Count')
   }
-}
 
-export const getWinner = async (id: number) => {
-  return (await fetch(`${winners}/${id}`)).json();
-}
+  static async deleteCar(id: string): Promise<void> {
+    (await fetch(`${garage}/${id}`, { method: 'DELETE' })).json();
+  }
 
-export const getWinnersStatus = async (id: number) => {
-  return (await fetch(`${winners}/${id}`)).status;
-}
+  static async updateCar(id: string, body: BodyCar): Promise<void> {
+    (await fetch(`${garage}/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(body),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })).json();
+  }
 
-export const deleteWinner = async (id: string) => {
-  (await fetch(`${winners}/${id}`, { method: 'DELETE' })).json();
-}
+  static async startEngine(id: string): Promise<CarSpeed> {
+    return (await fetch(`${engine}?id=${id}&status=started`)).json();
+  }
 
-export const createWinner = async (body: object) => {
-  (await fetch(winners, {
-    method: 'POST',
-    body: JSON.stringify(body),
-    headers: {
-      'Content-Type': 'application/json'
+  static async stopEngine(id: string): Promise<void> {
+    (await fetch(`${engine}?id=${id}&status=stopped`)).json();
+  }
+
+  static async drive(id: string): Promise<{ [key: string]: boolean }> {
+    const res = await fetch(`${engine}?id=${id}&status=drive`).catch();
+    return res.status !== 200 ? { success: false } : { ...(await res.json()) };
+  }
+
+  static async getWinner(id: number): Promise<WinnerInfo> {
+    return (await fetch(`${winners}/${id}`)).json();
+  }
+
+  static async deleteWinner(id: string): Promise<void> {
+    (await fetch(`${winners}/${id}`, { method: 'DELETE' })).json();
+  }
+
+  static async saveWinner({ id, time }: SaveWinners): Promise<void> {
+    const winnerStatus = await Api.getWinnersStatus(id);
+
+    if (winnerStatus === 404) {
+      await Api.createWinner({
+        id,
+        wins: 1,
+        time,
+      });
+    } else {
+      const winner = await Api.getWinner(id);
+      await Api.updateWinner(id, {
+        id,
+        wins: winner.wins + 1,
+        time: time < winner.time ? time : winner.time,
+      });
     }
-  })).json();
-}
+  }
 
-export const updateWinner = async (id: number, body: object) => {
-  (await fetch(`${winners}/${id}`, {
-    method: 'PUT',
-    body: JSON.stringify(body),
-    headers: {
-      'Content-Type': 'application/json'
-    }
-  })).json();
-}
+  static async getWinnersStatus(id: number): Promise<number> {
+    return (await fetch(`${winners}/${id}`)).status;
+  }
 
-export const saveWinner = async ({ id, time }: saveWinners) => {
-  const winnerStatus = await getWinnersStatus(id);
+  static async createWinner(body: { [key: string]: unknown }): Promise<void> {
+    (await fetch(winners, {
+      method: 'POST',
+      body: JSON.stringify(body),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })).json();
+  }
 
-  if (winnerStatus === 404) {
-    await createWinner({
-      id,
-      wins: 1,
-      time
-    });
-  } else {
-    const winner = await getWinner(id);
-    await updateWinner(id, {
-      id,
-      wins: winner.wins + 1,
-      time: time < winner.time ? time : winner.time
-    });
+  static async updateWinner(id: number, body: { [key: string]: unknown }): Promise<void> {
+    (await fetch(`${winners}/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(body),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })).json();
   }
 }

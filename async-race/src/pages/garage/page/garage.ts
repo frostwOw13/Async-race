@@ -1,4 +1,4 @@
-import { RenderCar } from '../../../shared/constants';
+import { RenderCar } from '../../../shared/interfaces';
 import './garage.scss';
 
 export class Garage {
@@ -9,14 +9,14 @@ export class Garage {
     this.container.className = className;
   }
 
-  public renderGarage(cars: RenderCar[], count: string, page: number): string {
+  static renderGarage(cars: RenderCar[], count: string, page: number): string {
     const garageHTML = `
       <div id='garage'>
         <h1 class='garage-title'>Garage (${count})</h1>
         <h2 class='garage-title'>Page #${page}</h2>
         <ul class='garage-cars'>
           ${cars.map((car) => `
-            <li class="garage__item">${this.renderCar(car)}</li>
+            <li class="garage__item">${Garage.renderCar(car)}</li>
           `).join('')}
         </ul>
       </div>
@@ -24,7 +24,7 @@ export class Garage {
     return garageHTML;
   }
 
-  public renderCarImage(color: string): string {
+  static renderCarImage(color: string): string {
     const carImageHTML = `
       <svg version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
       width="120px" height="45px" viewBox="50 50 494.111 260" style="enable-background:new 0 0 494.111 494.111;"
@@ -88,11 +88,16 @@ export class Garage {
         <g>
         </g>
       </svg>
-    `
+    `;
     return carImageHTML;
   }
 
-  private renderCar({ id, name, color, isEngineStarted }: RenderCar): string {
+  static renderCar({
+    id,
+    name,
+    color,
+    isEngineStarted,
+  }: RenderCar): string {
     const carHTML = `
       <div class='general-buttons'>
         <button class='btn select-btn' id='select-car-${id}'>Select</button>
@@ -106,7 +111,7 @@ export class Garage {
             <button disabled class='btn-engine stop-engine-btn' id='stop-engine-car-${id}${isEngineStarted ? 'disabled' : ''}'>B</button>
           </div>
           <div class='car' id='car-${id}'>
-            ${this.renderCarImage(color)}
+            ${Garage.renderCarImage(color)}
           </div>
         </div>
         <div class='finish' id='finish-${id}'>🏁</div>
@@ -135,7 +140,7 @@ export class Garage {
           <button class='btn reset-button' id='reset'>Reset</button>
           <button class='btn generator-button' id='generator'>Generate cars</button>
         </div>
-        ${this.renderGarage(cars, count, page)}
+        ${Garage.renderGarage(cars, count, page)}
       </div>
       <div class='pagination'>
         <button class='btn garage-btn' id='prev'>Previous</button>

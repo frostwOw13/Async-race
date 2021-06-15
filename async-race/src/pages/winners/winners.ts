@@ -1,20 +1,18 @@
-import { getWinners } from '../../shared/api';
-import { BodyCar, Winner } from '../../shared/constants';
 import { Garage } from '../garage/page/garage';
+import { Api } from '../../shared/api';
+import { MAX_WINNERS_ON_PAGE } from '../../shared/constants';
 import './winners.scss';
 
 export class Winners {
   private container: HTMLElement;
-  private garage: Garage;
 
   constructor(className: string) {
     this.container = document.createElement('div');
     this.container.className = className;
-    this.garage = new Garage('garage');
   }
 
-  public async renderWinners(page: number = 1, limit: number = 10): Promise<void> {
-    const { items, count } = await getWinners({ page, limit });
+  public async renderWinners(page: number, limit: number): Promise<void> {
+    const { items, count } = await Api.getWinners({ page, limit });
 
     const winnersHTML = `
       <h1 class='winners-title'>Winners (${count})</h1>
@@ -30,8 +28,8 @@ export class Winners {
         <tbody>
           ${items.map((winner, index) => `
             <tr>
-              <td>${index + 1}</td>
-              <td>${this.garage.renderCarImage(winner.car.color)}</td>
+              <td>${`${page === 1 ? '' : page - 1}${index + 1}`}</td>
+              <td>${Garage.renderCarImage(winner.car.color)}</td>
               <td>${winner.car.name}</td>
               <td>${winner.wins}</td>
               <td>${winner.time}</td>
@@ -48,7 +46,7 @@ export class Winners {
   }
 
   public render(): HTMLElement {
-    this.renderWinners();
+    this.renderWinners(1, MAX_WINNERS_ON_PAGE);
     return this.container;
   }
 }

@@ -3,10 +3,6 @@ import { Component } from '../../../components/component';
 import './header.scss';
 
 export class Header extends Component {
-  constructor(tagName: string, className: string) {
-    super(tagName, className);
-  }
-
   private renderPageButtons(): void {
     this.container.innerHTML = '';
     const pageButtons = document.createElement('div');
@@ -15,7 +11,7 @@ export class Header extends Component {
       const buttonHTML = document.createElement('a');
       buttonHTML.href = `#${button.id}`;
       buttonHTML.innerText = button.text;
-      buttonHTML.className = 'buttons';
+      buttonHTML.className = 'button';
       pageButtons.append(buttonHTML);
     });
     this.container.append(pageButtons);
