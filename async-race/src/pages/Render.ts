@@ -1,5 +1,5 @@
 import { MAX_WINNERS_ON_PAGE } from '../shared/constants';
-import { RenderCar } from '../shared/interfaces';
+import { CarModel } from '../shared/interfaces';
 import { Garage } from './garage/page/garage';
 import { Winners } from './winners/winners';
 
@@ -10,7 +10,7 @@ export class Render {
     this.winners = new Winners('winners');
   }
 
-  static garagePage(cars: RenderCar[], count: string, page: number): HTMLElement {
+  static garagePage(cars: CarModel[], count: string, page: number): HTMLElement {
     const html = `
       <div class='garage-view'>
         <div class='garage-forms'>

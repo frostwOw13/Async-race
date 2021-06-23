@@ -1,4 +1,4 @@
-import { RenderCar } from '../../../shared/interfaces';
+import { CarModel } from '../../../shared/interfaces';
 import './garage.scss';
 
 export class Garage {
@@ -9,7 +9,7 @@ export class Garage {
     this.container.className = className;
   }
 
-  static renderGarage(cars: RenderCar[], count: string, page: number): string {
+  static renderGarage(cars: CarModel[], count: string, page: number): string {
     const garageHTML = `
       <div id='garage'>
         <h1 class='garage-title'>Garage (${count})</h1>
@@ -97,7 +97,7 @@ export class Garage {
     name,
     color,
     isEngineStarted,
-  }: RenderCar): string {
+  }: CarModel): string {
     const carHTML = `
       <div class='general-buttons'>
         <button class='btn select-btn' id='select-car-${id}'>Select</button>

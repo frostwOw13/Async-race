@@ -1,12 +1,12 @@
 import {
   Winner,
-  GetWinnersReturn,
-  SaveWinners,
-  GetWinners,
-  GetCarsReturn,
-  BodyCar,
-  CarSpeed,
-  WinnerInfo,
+  WinnersResponse,
+  WinnerRequest,
+  WinnersRequest,
+  CarResponseModel,
+  CarBodyModel,
+  CarSpeedResponseModel,
+  WinnerResponse,
 } from './interfaces';
 
 import { garage, winners, engine } from './constants';
@@ -15,7 +15,7 @@ export class Api {
   static async getWinners({
     page,
     limit = 10,
-  }: GetWinners): Promise<GetWinnersReturn> {
+  }: WinnersRequest): Promise<WinnersResponse> {
     const response = await fetch(`${winners}?_page=${page}&_limit=${limit}&_sort=time`);
     const items = await response.json();
 
@@ -25,7 +25,7 @@ export class Api {
     };
   }
 
-  static async getCars(page: number, limit: number): Promise<GetCarsReturn> {
+  static async getCars(page: number, limit: number): Promise<CarResponseModel> {
     const response = await fetch(`${garage}?_page=${page}&_limit=${limit}`);
 
     return {
@@ -34,7 +34,7 @@ export class Api {
     };
   }
 
-  static async getCar(id: string): Promise<BodyCar> {
+  static async getCar(id: string): Promise<CarBodyModel> {
     const car = await (await fetch(`${garage}/${id}`)).json();
     return car;
   }
@@ -53,7 +53,7 @@ export class Api {
     (await fetch(`${garage}/${id}`, { method: 'DELETE' })).json();
   }
 
-  static async updateCar(id: string, body: BodyCar): Promise<void> {
+  static async updateCar(id: string, body: CarBodyModel): Promise<void> {
     (await fetch(`${garage}/${id}`, {
       method: 'PUT',
       body: JSON.stringify(body),
@@ -63,7 +63,7 @@ export class Api {
     })).json();
   }
 
-  static async startEngine(id: string): Promise<CarSpeed> {
+  static async startEngine(id: string): Promise<CarSpeedResponseModel> {
     return (await fetch(`${engine}?id=${id}&status=started`)).json();
   }
 
@@ -76,7 +76,7 @@ export class Api {
     return res.status !== 200 ? { success: false } : { ...(await res.json()) };
   }
 
-  static async getWinner(id: number): Promise<WinnerInfo> {
+  static async getWinner(id: number): Promise<WinnerResponse> {
     return (await fetch(`${winners}/${id}`)).json();
   }
 
@@ -84,7 +84,7 @@ export class Api {
     (await fetch(`${winners}/${id}`, { method: 'DELETE' })).json();
   }
 
-  static async saveWinner({ id, time }: SaveWinners): Promise<void> {
+  static async saveWinner({ id, time }: WinnerRequest): Promise<void> {
     const winnerStatus = await Api.getWinnersStatus(id);
 
     if (winnerStatus === 404) {

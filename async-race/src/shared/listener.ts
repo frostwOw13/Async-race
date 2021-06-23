@@ -1,7 +1,7 @@
 import { Animation } from '../components/animation';
 import { Car } from '../pages/garage/car';
 import { Garage } from '../pages/garage/page/garage';
-import { RenderCar } from './interfaces';
+import { CarModel } from './interfaces';
 import { Api } from './api';
 import {
   carBrands,
@@ -104,7 +104,7 @@ export class Listener {
     resetButton.disabled = false;
 
     const { items } = await Api.getCars(currentPage, MAX_CARS_ON_PAGE);
-    items.forEach(async (car: RenderCar) => {
+    items.forEach(async (car: CarModel) => {
       const carHTML = document.getElementById(`car-${car.id}`);
       const flagHTML = document.getElementById(`finish-${car.id}`);
       const timeWinner = await Car.start(car.id.toString());
@@ -134,7 +134,7 @@ export class Listener {
     raceButton.disabled = false;
 
     const { items } = await Api.getCars(currentPage, MAX_CARS_ON_PAGE);
-    items.forEach((car: RenderCar) => {
+    items.forEach((car: CarModel) => {
       const carHTML = document.getElementById(`car-${car.id}`);
 
       Car.stop(car.id.toString());

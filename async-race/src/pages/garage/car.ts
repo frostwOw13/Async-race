@@ -1,19 +1,13 @@
-import { BodyCar } from '../../shared/interfaces';
+import { CarBodyModel } from '../../shared/interfaces';
 import { Message } from './message/message';
 import { Api } from '../../shared/api';
 
 export class Car {
-  private api: Api;
-
-  constructor() {
-    this.api = new Api();
-  }
-
   static async addCar(name: string, color: string): Promise<void> {
     await Api.createCar({ name, color });
   }
 
-  static async updateCar(id: string, body: BodyCar): Promise<void> {
+  static async updateCar(id: string, body: CarBodyModel): Promise<void> {
     await Api.updateCar(id, body);
   }
 
@@ -32,7 +26,7 @@ export class Car {
     await Api.stopEngine(id);
   }
 
-  static async messageWinner(car: BodyCar, time: number): Promise<void> {
+  static async messageWinner(car: CarBodyModel, time: number): Promise<void> {
     const message = new Message('winner');
     message.render(car.name, time);
   }
