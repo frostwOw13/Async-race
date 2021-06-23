@@ -1,6 +1,5 @@
 import { Animation } from '../components/animation';
 import { Car } from '../pages/garage/car';
-import { Garage } from '../pages/garage/page/garage';
 import { CarModel } from './interfaces';
 import { Api } from './api';
 import {
@@ -10,6 +9,7 @@ import {
   MAX_CARS_ON_PAGE,
   AMOUNT_OF_CARS_FROM_GENERATOR,
 } from './constants';
+import { Render } from '../pages/render';
 
 export class Listener {
   private animation: Animation;
@@ -48,7 +48,7 @@ export class Listener {
     const id = element.id.split('-')[2];
     Car.deleteCar(id);
     const { items, count } = await Api.getCars(currentPage, MAX_CARS_ON_PAGE);
-    if (count) Garage.renderGarage(items, count, currentPage);
+    if (count) Render.garageContainer(items, count, currentPage);
   }
 
   static selectCar(element: HTMLElement): Promise<void> {
@@ -159,6 +159,6 @@ export class Listener {
       if (name && color) Car.addCar(name, color);
     }
     const { items, count } = await Api.getCars(currentPage, MAX_CARS_ON_PAGE);
-    if (count) Garage.renderGarage(items, count, currentPage);
+    if (count) Render.garageContainer(items, count, currentPage);
   }
 }

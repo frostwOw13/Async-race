@@ -1,5 +1,4 @@
-import { Garage } from './pages/garage/page/garage';
-import { Render } from './pages/Render';
+import { Render } from './pages/render';
 import { Header } from './pages/static/header/header';
 import { Winners } from './pages/winners/winners';
 import { Api } from './shared/api';
@@ -54,7 +53,7 @@ export class App {
     garage?.remove();
     const { items, count } = await Api.getCars(this.currentPage, MAX_CARS_ON_PAGE);
     if (count) {
-      garageView?.insertAdjacentHTML('beforeend', Garage.renderGarage(items, count, this.currentPage));
+      garageView?.insertAdjacentHTML('beforeend', Render.garageContainer(items, count, this.currentPage));
     }
   }
 
@@ -92,7 +91,7 @@ export class App {
           if (this.currentPage > 1) {
             this.currentPage -= 1;
             const { items, count } = await Api.getCars(this.currentPage, MAX_CARS_ON_PAGE);
-            if (count) Garage.renderGarage(items, count, this.currentPage);
+            if (count) Render.garageContainer(items, count, this.currentPage);
             this.winnersPage.renderWinners(this.currentPage, MAX_WINNERS_ON_PAGE);
             this.renderNewGarage();
           }
@@ -104,7 +103,7 @@ export class App {
           if (count && Number(count) / (MAX_CARS_ON_PAGE * this.currentPage) > 1) {
             this.currentPage += 1;
             if (items) {
-              if (count) Garage.renderGarage(items, count, this.currentPage);
+              if (count) Render.garageContainer(items, count, this.currentPage);
               this.winnersPage.renderWinners(this.currentPage, MAX_WINNERS_ON_PAGE);
               this.renderNewGarage();
             }

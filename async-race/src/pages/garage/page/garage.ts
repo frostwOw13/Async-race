@@ -9,21 +9,6 @@ export class Garage {
     this.container.className = className;
   }
 
-  static renderGarage(cars: CarModel[], count: string, page: number): string {
-    const garageHTML = `
-      <div id='garage'>
-        <h1 class='garage-title'>Garage (${count})</h1>
-        <h2 class='garage-title'>Page #${page}</h2>
-        <ul class='garage-cars'>
-          ${cars.map((car) => `
-            <li class="garage__item">${Garage.renderCar(car)}</li>
-          `).join('')}
-        </ul>
-      </div>
-    `;
-    return garageHTML;
-  }
-
   static renderCarImage(color: string): string {
     const carImageHTML = `
       <svg version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
@@ -90,33 +75,5 @@ export class Garage {
       </svg>
     `;
     return carImageHTML;
-  }
-
-  static renderCar({
-    id,
-    name,
-    color,
-    isEngineStarted,
-  }: CarModel): string {
-    const carHTML = `
-      <div class='general-buttons'>
-        <button class='btn select-btn' id='select-car-${id}'>Select</button>
-        <button class='btn remove-btn' id='remove-car-${id}'>Remove</button>
-        <span class='car-name'>${name}</span>
-      </div>
-      <div class='road'>
-        <div class='launch-pad'>
-          <div class='control-panel'>
-            <button class='btn-engine start-engine-btn' id='start-engine-car-${id}${isEngineStarted ? 'disabled' : ''}'>A</button>
-            <button disabled class='btn-engine stop-engine-btn' id='stop-engine-car-${id}${isEngineStarted ? 'disabled' : ''}'>B</button>
-          </div>
-          <div class='car' id='car-${id}'>
-            ${Garage.renderCarImage(color)}
-          </div>
-        </div>
-        <div class='finish' id='finish-${id}'>🏁</div>
-      </div>
-    `;
-    return carHTML;
   }
 }
