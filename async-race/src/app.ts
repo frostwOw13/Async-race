@@ -1,4 +1,5 @@
 import { Garage } from './pages/garage/page/garage';
+import { Render } from './pages/Render';
 import { Header } from './pages/static/header/header';
 import { Winners } from './pages/winners/winners';
 import { Api } from './shared/api';
@@ -8,9 +9,9 @@ import { Listener } from './shared/listener';
 export class App {
   private container: HTMLElement = document.body;
 
-  private header: Header;
+  private render: Render;
 
-  private garagePage: Garage;
+  private header: Header;
 
   private winnersPage: Winners;
 
@@ -19,8 +20,8 @@ export class App {
   private listener: Listener;
 
   constructor() {
+    this.render = new Render();
     this.header = new Header('header', 'header');
-    this.garagePage = new Garage('garage');
     this.winnersPage = new Winners('winners');
     this.listener = new Listener();
     this.currentPage = 1;
@@ -29,7 +30,7 @@ export class App {
   public async init(): Promise<void> {
     this.container.append(this.header.render());
     const { items, count } = await Api.getCars(this.currentPage, MAX_CARS_ON_PAGE);
-    if (count) this.container.append(this.garagePage.render(items, count, this.currentPage));
+    if (count) this.container.append(Render.garagePage(items, count, this.currentPage));
     this.enableRouteChange();
     this.listen();
   }
@@ -40,9 +41,9 @@ export class App {
 
     if (idPage === PageIds.GaragePage) {
       const { items, count } = await Api.getCars(this.currentPage, MAX_CARS_ON_PAGE);
-      if (count) this.container.append(this.garagePage.render(items, count, this.currentPage));
+      if (count) this.container.append(Render.garagePage(items, count, this.currentPage));
     } else if (idPage === PageIds.WinnersPage) {
-      this.container.append(this.winnersPage.render());
+      this.container.append(await this.render.winnersPage());
     }
   }
 
@@ -69,60 +70,76 @@ export class App {
     window.addEventListener('click', async (event) => {
       const eventTarget = <HTMLButtonElement>event.target;
 
-      if (eventTarget.id === 'create-submit') {
-        Listener.createCar();
-      }
+      switch (eventTarget.id) {
+        case 'create-submit':
+          Listener.createCar();
+          break;
 
-      if (eventTarget.className === 'btn remove-btn') {
-        Listener.removeCar(eventTarget, this.currentPage);
-        this.renderNewGarage();
-      }
+        case 'race':
+          this.listener.raceAllCars(eventTarget, this.currentPage);
+          break;
 
-      if (eventTarget.className === 'btn select-btn') {
-        Listener.selectCar(eventTarget).then(() => this.renderNewGarage());
-      }
+        case 'reset':
+          this.listener.stopAllCars(eventTarget, this.currentPage);
+          break;
 
-      if (eventTarget.className === 'btn-engine start-engine-btn') {
-        this.listener.startEngine(eventTarget);
-      }
-
-      if (eventTarget.className === 'btn-engine stop-engine-btn') {
-        this.listener.stopEngine(eventTarget);
-      }
-
-      if (eventTarget.id === 'race') {
-        this.listener.raceAllCars(eventTarget, this.currentPage);
-      }
-
-      if (eventTarget.id === 'reset') {
-        this.listener.stopAllCars(eventTarget, this.currentPage);
-      }
-
-      if (eventTarget.id === 'generator') {
-        Listener.generateCars(this.currentPage);
-        this.renderNewGarage();
-      }
-
-      if (eventTarget.id === 'prev') {
-        if (this.currentPage > 1) {
-          this.currentPage -= 1;
-          const { items, count } = await Api.getCars(this.currentPage, MAX_CARS_ON_PAGE);
-          if (count) Garage.renderGarage(items, count, this.currentPage);
-          this.winnersPage.renderWinners(this.currentPage, MAX_WINNERS_ON_PAGE);
+        case 'generator':
+          Listener.generateCars(this.currentPage);
           this.renderNewGarage();
-        }
-      }
+          break;
 
-      if (eventTarget.id === 'next') {
-        const { items, count } = await Api.getCars(this.currentPage, MAX_CARS_ON_PAGE);
-        if (count && Number(count) / (MAX_CARS_ON_PAGE * this.currentPage) > 1) {
-          this.currentPage += 1;
-          if (items) {
+        case 'prev':
+          if (this.currentPage > 1) {
+            this.currentPage -= 1;
+            const { items, count } = await Api.getCars(this.currentPage, MAX_CARS_ON_PAGE);
             if (count) Garage.renderGarage(items, count, this.currentPage);
             this.winnersPage.renderWinners(this.currentPage, MAX_WINNERS_ON_PAGE);
             this.renderNewGarage();
           }
+          break;
+
+        case 'next': {
+          const { items, count } = await Api.getCars(this.currentPage, MAX_CARS_ON_PAGE);
+
+          if (count && Number(count) / (MAX_CARS_ON_PAGE * this.currentPage) > 1) {
+            this.currentPage += 1;
+            if (items) {
+              if (count) Garage.renderGarage(items, count, this.currentPage);
+              this.winnersPage.renderWinners(this.currentPage, MAX_WINNERS_ON_PAGE);
+              this.renderNewGarage();
+            }
+          }
+          break;
         }
+
+        default:
+          break;
+      }
+    });
+
+    window.addEventListener('click', async (event) => {
+      const eventTarget = <HTMLButtonElement>event.target;
+
+      switch (eventTarget.className) {
+        case 'btn remove-btn':
+          Listener.removeCar(eventTarget, this.currentPage);
+          this.renderNewGarage();
+          break;
+
+        case 'btn select-btn':
+          Listener.selectCar(eventTarget).then(() => this.renderNewGarage());
+          break;
+
+        case 'btn-engine start-engine-btn':
+          this.listener.startEngine(eventTarget);
+          break;
+
+        case 'btn-engine stop-engine-btn':
+          this.listener.stopEngine(eventTarget);
+          break;
+
+        default:
+          break;
       }
     });
   }

@@ -1,6 +1,5 @@
 import { Garage } from '../garage/page/garage';
 import { Api } from '../../shared/api';
-import { MAX_WINNERS_ON_PAGE } from '../../shared/constants';
 import './winners.scss';
 
 export class Winners {
@@ -11,7 +10,7 @@ export class Winners {
     this.container.className = className;
   }
 
-  public async renderWinners(page: number, limit: number): Promise<void> {
+  public async renderWinners(page: number, limit: number): Promise<HTMLElement> {
     const { items, count } = await Api.getWinners({ page, limit });
 
     const winnersHTML = `
@@ -43,10 +42,6 @@ export class Winners {
       </div>
     `;
     this.container.innerHTML = winnersHTML;
-  }
-
-  public render(): HTMLElement {
-    this.renderWinners(1, MAX_WINNERS_ON_PAGE);
     return this.container;
   }
 }

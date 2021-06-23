@@ -119,35 +119,4 @@ export class Garage {
     `;
     return carHTML;
   }
-
-  public render(cars: RenderCar[], count: string, page: number): HTMLElement {
-    const html = `
-      <div class='garage-view'>
-        <div class='garage-forms'>
-          <form class='form' id='create'>
-            <input class='input' id='create-name' name='name' type='text'>
-            <input class='color' id='create-color' name='color' type='color' value='#FFFFFF'>
-            <button class='btn' id='create-submit'>Create</button>
-          </form>
-          <form class='form' id='update'>
-            <input disabled class='input' id='update-name' name='name' type='text'>
-            <input disabled class='color' id='update-color' name='color' type='color' value='#FFFFFF'>
-            <button disabled class='btn' id='update-submit' href='#'>Update</button>
-          </form>
-        </div>
-        <div class='race-control'>
-          <button class='btn race-button' id='race'>Race</button>
-          <button class='btn reset-button' id='reset'>Reset</button>
-          <button class='btn generator-button' id='generator'>Generate cars</button>
-        </div>
-        ${Garage.renderGarage(cars, count, page)}
-      </div>
-      <div class='pagination'>
-        <button class='btn garage-btn' id='prev'>Previous</button>
-        <button class='btn garage-btn' id='next'>Next</button>
-      </div>
-    `;
-    this.container.innerHTML = html;
-    return this.container;
-  }
 }
