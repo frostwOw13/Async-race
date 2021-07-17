@@ -4,11 +4,11 @@ export const MAX_WINNERS_ON_PAGE = 10;
 
 export const AMOUNT_OF_CARS_FROM_GENERATOR = 100;
 
-export const garage = 'http://127.0.0.1:3000/garage';
+export const garage = 'https://async-race-server-frostwow13.herokuapp.com/garage';
 
-export const winners = 'http://127.0.0.1:3000/winners';
+export const winners = 'https://async-race-server-frostwow13.herokuapp.com/winners';
 
-export const engine = 'http://127.0.0.1:3000/engine';
+export const engine = 'https://async-race-server-frostwow13.herokuapp.com/engine';
 
 export const enum PageIds {
   GaragePage = 'garage',
